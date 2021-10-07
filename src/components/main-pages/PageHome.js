@@ -55,9 +55,9 @@ export const PageHome = () => {
                     id=""
                     placeholder="haakon1337"
                   />
-                  <label htmlFor="name">password:</label>
+                  <label htmlFor="password">password:</label>
                   <input
-                    type="text"
+                    type="password"
                     name="password"
                     id=""
                     placeholder="pAssword123!"

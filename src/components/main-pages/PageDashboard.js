@@ -12,8 +12,10 @@ export const PageDashboard = () => {
   const [user, setUser] = useState([]);
 
   // chatrooms states
+  const [activeChatroom, setActiveChatroom] = useState({});
   const [allChatrooms, setAllChatrooms] = useState([]);
   const [userChatrooms, setUserChatrooms] = useState([]);
+  const [joinableChatrooms, setJoinableChatrooms] = useState([]);
 
   let userId = useParams().id;
 
@@ -27,14 +29,21 @@ export const PageDashboard = () => {
     let res = await get(`/get-all-chatrooms`, signal);
     console.log(res.data);
     setAllChatrooms(res.data);
+    setUserChatrooms(res.data.filter((chat) => chat.members.includes(userId)));
+    setJoinableChatrooms(
+      res.data.filter((chat) => !chat.members.includes(userId))
+    );
+    setActiveChatroom(
+      res.data.filter((chat) => chat.members.includes(userId))[0]
+    );
+    console.log(activeChatroom, "active chat");
     // const arr = [];
     // res.data.forEach((obj) => {
     //   console.log(obj);
     //   console.log(obj.filter((chat) => chat.members.includes(user._id)));
     // });
-    console.log(user._id);
 
-    console.log(res.data.filter((chat) => chat.members.includes(user._id)));
+    console.log(res.data.filter((chat) => !chat.members.includes(userId)));
   };
 
   useEffect(() => {
@@ -44,10 +53,10 @@ export const PageDashboard = () => {
     return window.removeEventListener("resize", changeW);
   }, [W]);
 
-  useEffect(() => {
+  useEffect(async () => {
     const abortController = new AbortController();
-    await fetchUser(abortController.signal);
-    if (user !== undefined) fetchChatrooms(abortController.signal);
+    fetchUser(abortController.signal);
+    fetchChatrooms(abortController.signal);
     return () => abortController.abort();
   }, []);
 
@@ -97,6 +106,18 @@ export const PageDashboard = () => {
           xs={{ span: 12, order: 2 }}
           className="dashboard-con-col2"
         >
+          {userChatrooms.map((room) => {
+            return (
+              <section className="col2-chatroom-con">
+                <div className="flex chatroom-con-title-fav-con">
+                  <h5>{room.name}</h5>
+                  <div className="title-fav-con-fav">O</div>
+                </div>
+                <div className="chatroom-con-mes">latest message</div>
+              </section>
+            );
+          })}
+
           <form action={api_address + "/create-chatroom"} method="post">
             <input type="text" name="name" id="" placeholder="chatroom name" />
             <input type="text" name="creater" id="" value={user._id} hidden />
@@ -109,9 +130,44 @@ export const PageDashboard = () => {
             lg={{ span: 6, order: 3 }}
             md={{ span: 6, order: 3 }}
             xs={{ span: 12, order: 3 }}
-            className=""
+            className="dashboard-con-col3"
           >
-            RIGHT
+            <section className="flex height100 col3-chat-con">
+              <section className="flex chat-con-top">
+                <div className="flex top-userinfo">
+                  <div className="userinfo-avatar">ava</div>
+                  <div className="userinfo-name">{user.name}</div>
+                  <div>{activeChatroom.name}</div>
+                </div>
+                <div className="flex top-settings">
+                  <div className="userinfo-avatar">...</div>
+                </div>
+              </section>
+              <section className="height100 chat-con-mid">
+                {activeChatroom.messages.map((m) => {
+                  return <div>ett message</div>;
+                })}
+              </section>
+              <section className="chat-con-bot">
+                <form action={api_address + "/create-message"} method="post">
+                  <input
+                    type="text"
+                    name="text"
+                    id=""
+                    placeholder="write message"
+                  />
+                  <input
+                    type="text"
+                    name="chatroom"
+                    value={activeChatroom._id}
+                    hidden
+                  />
+                  <input type="text" name="sender" value={user._id} hidden />
+                  {/* <input type="text" name="time" value="13.37" hidden /> */}
+                  <button type="submit">send</button>
+                </form>
+              </section>
+            </section>
           </Col>
         ) : null}
       </Row>

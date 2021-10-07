@@ -134,6 +134,31 @@
           position: absolute;
         }
       }
+      .col2-chatroom-con {
+        background: linear-gradient(
+          235deg,
+          rgba(7, 109, 255, 1) 25%,
+          rgba(255, 255, 255, 1) 25%
+        );
+
+        .chatroom-con-title-fav-con {
+          justify-content: space-between;
+        }
+      }
+
+      .dashboard-con-col3 {
+        .col3-chat-con {
+          flex-direction: column;
+          justify-content: space-between;
+          .chat-con-top {
+            justify-content: space-between;
+          }
+          .chat-con-mid {
+          }
+          .chat-con-bot {
+          }
+        }
+      }
     }
 
     //   ONLY ON WIDTH > MEDIUM (DESKTOP)
