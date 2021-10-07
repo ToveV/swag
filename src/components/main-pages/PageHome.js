@@ -6,18 +6,13 @@ import { LoginSignup } from "./home-comps/LoginSignup";
 
 import { breakpoints } from "../../utils/breakpoints";
 import { api_address, post } from "../../utils/http";
-import { useApi } from "../../utils/useApi";
-
-import { useAuth0 } from "@auth0/auth0-react";
 
 export const PageHome = () => {
   const [W, setW] = useState(window.innerWidth);
-  const { user, isAuthenticated, isLoading } = useAuth0();
   const [loginSignup, setLoginSignup] = useState("login");
   const [avatar, setAvatar] = useState([0, 0]);
   //   const [avatarChange, setAvatarChange] = useState(0);
   const [theme, setTheme] = useState([0, 0]);
-  const { loginWithRedirect, logout, loginWithPopup } = useAuth0();
 
   useEffect(() => {
     let changeW = window.addEventListener("resize", () =>
@@ -26,10 +21,6 @@ export const PageHome = () => {
     return window.removeEventListener("resize", changeW);
   }, [W]);
 
-  useEffect(() => {
-    console.log(user);
-  }, [isAuthenticated]);
-
   return (
     <Container
       className={`page page-home ${
@@ -37,12 +28,8 @@ export const PageHome = () => {
       }`}
     >
       <Container className="flex login-con">
-        {user && (
-          <section>
-            <img src={user.picture} alt="" />
-            {user.name}
-          </section>
-        )}
+        <h3>{loginSignup === "login" ? "Welcome" : "Create account"}</h3>
+
         <Container className="height100">
           <Row className="height100">
             <Col
@@ -51,20 +38,52 @@ export const PageHome = () => {
               xs={{ span: 12, order: 1 }}
               className="col-nopad"
             >
-              <section className="height100">
-                {!isAuthenticated ? (
-                  <button onClick={() => loginWithRedirect()}>Login</button>
-                ) : (
-                  <button
-                    onClick={() =>
-                      logout({
-                        returnTo: "http://localhost:3000",
-                      })
-                    }
-                  >
-                    Logout
-                  </button>
-                )}
+              <section className="flex height100 login-con-form-btn">
+                <form
+                  action={
+                    loginSignup === "login"
+                      ? api_address + "/user-login"
+                      : api_address + "/create-user"
+                  }
+                  method="post"
+                  className="flex login-con-form-userpass"
+                >
+                  <label htmlFor="name">username:</label>
+                  <input
+                    type="text"
+                    name="name"
+                    id=""
+                    placeholder="haakon1337"
+                  />
+                  <label htmlFor="name">password:</label>
+                  <input
+                    type="text"
+                    name="password"
+                    id=""
+                    placeholder="pAssword123!"
+                  />
+                  <input type="number" name="theme" value={theme[0]} hidden />
+                  <input type="number" name="avatar" value={avatar[0]} hidden />
+                  <input
+                    type="number"
+                    name="avatarChange"
+                    value={avatar[1]}
+                    hidden
+                  />
+                  <input
+                    type="number"
+                    name="themeChange"
+                    value={theme[1]}
+                    hidden
+                  />
+                </form>
+
+                {W > breakpoints.medium ? (
+                  <LoginSignup
+                    loginSignup={loginSignup}
+                    setLoginSignup={setLoginSignup}
+                  />
+                ) : null}
               </section>
             </Col>
             <Col

@@ -7,22 +7,34 @@ import { breakpoints } from "../../utils/breakpoints";
 import { useEffect } from "react";
 import { useState } from "react";
 
-import { useAuth0 } from "@auth0/auth0-react";
-
 export const PageDashboard = () => {
   const [W, setW] = useState(window.innerWidth);
-  const [User, setUser] = useState([]);
-  let userId = useParams().id;
-  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } =
-    useAuth0();
+  const [user, setUser] = useState([]);
 
-  // user = User;
-  // console.log(user);
+  // chatrooms states
+  const [allChatrooms, setAllChatrooms] = useState([]);
+  const [userChatrooms, setUserChatrooms] = useState([]);
+
+  let userId = useParams().id;
 
   const fetchUser = async (signal) => {
     let res = await get(`/get-user/${userId}`, signal);
     console.log(res.data);
     setUser(res.data);
+  };
+
+  const fetchChatrooms = async (signal) => {
+    let res = await get(`/get-all-chatrooms`, signal);
+    console.log(res.data);
+    setAllChatrooms(res.data);
+    // const arr = [];
+    // res.data.forEach((obj) => {
+    //   console.log(obj);
+    //   console.log(obj.filter((chat) => chat.members.includes(user._id)));
+    // });
+    console.log(user._id);
+
+    console.log(res.data.filter((chat) => chat.members.includes(user._id)));
   };
 
   useEffect(() => {
@@ -33,7 +45,10 @@ export const PageDashboard = () => {
   }, [W]);
 
   useEffect(() => {
-    fetchUser();
+    const abortController = new AbortController();
+    await fetchUser(abortController.signal);
+    if (user !== undefined) fetchChatrooms(abortController.signal);
+    return () => abortController.abort();
   }, []);
 
   return (
@@ -57,7 +72,13 @@ export const PageDashboard = () => {
           xs={{ span: 12, order: 1 }}
           className="flex dashboard-con-col1"
         >
-          <section className="col1-user-con">user con</section>
+          <section className="flex col1-user-con">
+            <div className="height100 user-con-avatar">
+              avatar: {user.avatar}
+            </div>
+            <div>{user.name}</div>
+          </section>
+
           <section className="flex col1-nav-con">
             <div className="nav-con-li">
               <span>icon</span> home
@@ -76,7 +97,12 @@ export const PageDashboard = () => {
           xs={{ span: 12, order: 2 }}
           className="dashboard-con-col2"
         >
-          MID
+          <form action={api_address + "/create-chatroom"} method="post">
+            <input type="text" name="name" id="" placeholder="chatroom name" />
+            <input type="text" name="creater" id="" value={user._id} hidden />
+
+            <button type="submit">create</button>
+          </form>
         </Col>
         {W > breakpoints.medium ? (
           <Col
