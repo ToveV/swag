@@ -10,7 +10,11 @@ import { useState } from "react";
 
 import { WS } from "../../js/ws";
 import { ChatroomsHome } from "./dashboard-comps/home/ChatroomsHome";
+import { ChatHome } from "./dashboard-comps/home/ChatHome";
 import { ChatroomsSettings } from "./dashboard-comps/settings/ChatroomsSettings";
+import { UserSettings } from "./dashboard-comps/settings/UserSettings";
+import { Nav } from "./dashboard-comps/Nav";
+import { UserAvatar } from "./dashboard-comps/UserAvatar";
 
 export const PageDashboard = () => {
   // use WebSocket
@@ -94,12 +98,6 @@ export const PageDashboard = () => {
           : "page-dashboard-desktop"
       }`}
     >
-      {/* <section>
-        <h1>Dashboard Page</h1>
-        <a href={api_address + "/user-logout"}>logout</a>
-        <h2>{user.name}</h2>
-        <h2>{user.avatar}</h2>
-      </section> */}
       <Row className="dashboard-con">
         <Col
           lg={{ span: 2, order: 1 }}
@@ -107,34 +105,9 @@ export const PageDashboard = () => {
           xs={{ span: 12, order: 1 }}
           className="flex dashboard-con-col1"
         >
-          <section className="flex col1-user-con">
-            <div className="height100 user-con-avatar">
-              avatar: {user.avatar}
-            </div>
-            <div>{user.name}</div>
-          </section>
+          <UserAvatar user={user} />
 
-          <section className="flex col1-nav-con">
-            <div
-              className="nav-con-li"
-              onClick={() => {
-                setDashboardNavState("home");
-              }}
-            >
-              <span>icon</span> home
-            </div>
-            <div
-              className="nav-con-li"
-              onClick={() => {
-                setDashboardNavState("settings");
-              }}
-            >
-              <span>icon</span>settings
-            </div>
-            <a href={api_address + "/user-logout"} className="nav-con-li">
-              <span>icon</span>log out
-            </a>
-          </section>
+          <Nav setDashboardNavState={setDashboardNavState} />
         </Col>
         <Col
           lg={{ span: 4, order: 2 }}
@@ -159,42 +132,11 @@ export const PageDashboard = () => {
             xs={{ span: 12, order: 3 }}
             className="dashboard-con-col3"
           >
-            <section className="flex height100 col3-chat-con">
-              <section className="flex chat-con-top">
-                <div className="flex top-userinfo">
-                  <div className="userinfo-avatar">ava</div>
-                  <div className="userinfo-name">{user.name}</div>
-                  <div>{activeChatroom.name}</div>
-                </div>
-                <div className="flex top-settings">
-                  <div className="userinfo-avatar">...</div>
-                </div>
-              </section>
-              <section className="height100 chat-con-mid">
-                {activeChatroom.messages.map((m) => {
-                  return <div>ett message</div>;
-                })}
-              </section>
-              <section className="chat-con-bot">
-                <form action={api_address + "/create-message"} method="post">
-                  <input
-                    type="text"
-                    name="text"
-                    id=""
-                    placeholder="write message"
-                  />
-                  <input
-                    type="text"
-                    name="chatroom"
-                    value={activeChatroom._id}
-                    hidden
-                  />
-                  <input type="text" name="sender" value={user._id} hidden />
-                  {/* <input type="text" name="time" value="13.37" hidden /> */}
-                  <button type="submit">send</button>
-                </form>
-              </section>
-            </section>
+            {dashboardNavState === "home" ? (
+              <ChatHome user={user} activeChatroom={activeChatroom} />
+            ) : (
+              <UserSettings />
+            )}
           </Col>
         ) : null}
       </Row>
