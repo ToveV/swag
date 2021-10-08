@@ -134,15 +134,33 @@
           position: absolute;
         }
       }
-      .col2-chatroom-con {
-        background: linear-gradient(
-          235deg,
-          rgba(7, 109, 255, 1) 25%,
-          rgba(255, 255, 255, 1) 25%
-        );
 
-        .chatroom-con-title-fav-con {
-          justify-content: space-between;
+      .dashboard-con-col2 {
+        .dash-settings-chatrooms {
+          flex-direction: column;
+
+          .col2-chatroom-con {
+            background: linear-gradient(
+              235deg,
+              rgba(7, 109, 255, 1) 25%,
+              rgba(255, 255, 255, 1) 25%
+            );
+          }
+        }
+
+        .dash-home-chatrooms {
+          flex-direction: column;
+          .col2-chatroom-con {
+            background: linear-gradient(
+              235deg,
+              rgba(7, 109, 255, 1) 25%,
+              rgba(255, 255, 255, 1) 25%
+            );
+
+            .chatroom-con-title-fav-con {
+              justify-content: space-between;
+            }
+          }
         }
       }
 

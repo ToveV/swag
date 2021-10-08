@@ -4,12 +4,36 @@ import { Container, Col, Row } from "react-bootstrap";
 import { useParams } from "react-router";
 
 import { breakpoints } from "../../utils/breakpoints";
+import { parse } from "../../utils/parse";
 import { useEffect } from "react";
 import { useState } from "react";
 
+import { WS } from "../../js/ws";
+import { ChatroomsHome } from "./dashboard-comps/home/ChatroomsHome";
+import { ChatroomsSettings } from "./dashboard-comps/settings/ChatroomsSettings";
+
 export const PageDashboard = () => {
+  // use WebSocket
+  // const websocket = new WebSocket("ws://localhost:5002");
+  // console.log("ws");
+
+  // websocket.addEventListener("close", (event) => {
+  //   console.log("Server down...", event);
+  // });
+  // websocket.addEventListener("message", ({ data }) => {
+  //   console.log("Message from server: ", data);
+
+  //   let obj = parse(data);
+
+  //   console.log(obj);
+  // });
+
   const [W, setW] = useState(window.innerWidth);
   const [user, setUser] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+
+  const [dashboardNavState, setDashboardNavState] = useState("home");
 
   // chatrooms states
   const [activeChatroom, setActiveChatroom] = useState({});
@@ -37,13 +61,12 @@ export const PageDashboard = () => {
       res.data.filter((chat) => chat.members.includes(userId))[0]
     );
     console.log(activeChatroom, "active chat");
-    // const arr = [];
-    // res.data.forEach((obj) => {
-    //   console.log(obj);
-    //   console.log(obj.filter((chat) => chat.members.includes(user._id)));
-    // });
+
+    fetchUser();
 
     console.log(res.data.filter((chat) => !chat.members.includes(userId)));
+
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -55,10 +78,13 @@ export const PageDashboard = () => {
 
   useEffect(async () => {
     const abortController = new AbortController();
-    fetchUser(abortController.signal);
-    fetchChatrooms(abortController.signal);
+    await fetchChatrooms(abortController.signal);
     return () => abortController.abort();
   }, []);
+
+  if (loading) {
+    return <h2 className="">Loading...</h2>;
+  }
 
   return (
     <Container
@@ -89,15 +115,25 @@ export const PageDashboard = () => {
           </section>
 
           <section className="flex col1-nav-con">
-            <div className="nav-con-li">
+            <div
+              className="nav-con-li"
+              onClick={() => {
+                setDashboardNavState("home");
+              }}
+            >
               <span>icon</span> home
             </div>
-            <div className="nav-con-li">
+            <div
+              className="nav-con-li"
+              onClick={() => {
+                setDashboardNavState("settings");
+              }}
+            >
               <span>icon</span>settings
             </div>
-            <div className="nav-con-li">
+            <a href={api_address + "/user-logout"} className="nav-con-li">
               <span>icon</span>log out
-            </div>
+            </a>
           </section>
         </Col>
         <Col
@@ -106,24 +142,15 @@ export const PageDashboard = () => {
           xs={{ span: 12, order: 2 }}
           className="dashboard-con-col2"
         >
-          {userChatrooms.map((room) => {
-            return (
-              <section className="col2-chatroom-con">
-                <div className="flex chatroom-con-title-fav-con">
-                  <h5>{room.name}</h5>
-                  <div className="title-fav-con-fav">O</div>
-                </div>
-                <div className="chatroom-con-mes">latest message</div>
-              </section>
-            );
-          })}
+          <h4>Chatrooms</h4>
 
-          <form action={api_address + "/create-chatroom"} method="post">
-            <input type="text" name="name" id="" placeholder="chatroom name" />
-            <input type="text" name="creater" id="" value={user._id} hidden />
+          <input type="text" name="" id="" placeholder="search chatrooms" />
 
-            <button type="submit">create</button>
-          </form>
+          {dashboardNavState === "home" ? (
+            <ChatroomsHome user={user} userChatrooms={userChatrooms} />
+          ) : (
+            <ChatroomsSettings userChatrooms={userChatrooms} />
+          )}
         </Col>
         {W > breakpoints.medium ? (
           <Col

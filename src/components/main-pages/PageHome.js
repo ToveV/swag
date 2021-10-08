@@ -52,14 +52,14 @@ export const PageHome = () => {
                   <input
                     type="text"
                     name="name"
-                    id=""
+                    id="name"
                     placeholder="haakon1337"
                   />
                   <label htmlFor="password">password:</label>
                   <input
                     type="password"
                     name="password"
-                    id=""
+                    id="password"
                     placeholder="pAssword123!"
                   />
                   <input type="number" name="theme" value={theme[0]} hidden />
