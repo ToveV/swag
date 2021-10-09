@@ -8,9 +8,19 @@ export const get = async (endpoint, signal) => {
   }).then((res) => res.json());
 };
 
-export const post = async (endpoint, signal) => {
+export const post = async (endpoint, data) => {
   return await fetch(api_address + endpoint, {
     method: "POST",
-    signal: signal,
-  }).then((res) => res.json());
+    // mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json",
+      // "Access-Control-Allow-Origin": "http://localhost:3000",
+      // "Access-Control-Allow-Credentials": true,
+    },
+    body: JSON.stringify(data),
+    // body: data.json(),
+  }).then((res) => {
+    res.json();
+    // console.log(res);
+  });
 };

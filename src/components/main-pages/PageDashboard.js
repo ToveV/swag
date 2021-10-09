@@ -17,21 +17,6 @@ import { Nav } from "./dashboard-comps/Nav";
 import { UserAvatar } from "./dashboard-comps/UserAvatar";
 
 export const PageDashboard = () => {
-  // use WebSocket
-  // const websocket = new WebSocket("ws://localhost:5002");
-  // console.log("ws");
-
-  // websocket.addEventListener("close", (event) => {
-  //   console.log("Server down...", event);
-  // });
-  // websocket.addEventListener("message", ({ data }) => {
-  //   console.log("Message from server: ", data);
-
-  //   let obj = parse(data);
-
-  //   console.log(obj);
-  // });
-
   const [W, setW] = useState(window.innerWidth);
   const [user, setUser] = useState([]);
 
@@ -44,6 +29,7 @@ export const PageDashboard = () => {
   const [allChatrooms, setAllChatrooms] = useState([]);
   const [userChatrooms, setUserChatrooms] = useState([]);
   const [joinableChatrooms, setJoinableChatrooms] = useState([]);
+  const [searchChatrooms, setSearchChatrooms] = useState("");
 
   let userId = useParams().id;
 
@@ -56,20 +42,18 @@ export const PageDashboard = () => {
   const fetchChatrooms = async (signal) => {
     let res = await get(`/get-all-chatrooms`, signal);
     console.log(res.data);
+
     setAllChatrooms(res.data);
     setUserChatrooms(res.data.filter((chat) => chat.members.includes(userId)));
+
     setJoinableChatrooms(
       res.data.filter((chat) => !chat.members.includes(userId))
     );
-    setActiveChatroom(
-      res.data.filter((chat) => chat.members.includes(userId))[0]
-    );
-    console.log(activeChatroom, "active chat");
+    // setActiveChatroom(
+    //   res.data.filter((chat) => chat.members.includes(userId))[0]
+    // );
 
     fetchUser();
-
-    console.log(res.data.filter((chat) => !chat.members.includes(userId)));
-
     setLoading(false);
   };
 
@@ -117,12 +101,26 @@ export const PageDashboard = () => {
         >
           <h4>Chatrooms</h4>
 
-          <input type="text" name="" id="" placeholder="search chatrooms" />
+          <input
+            type="text"
+            name=""
+            id=""
+            placeholder="search chatrooms"
+            onInput={(e) => setSearchChatrooms(e.target.value)}
+          />
 
           {dashboardNavState === "home" ? (
-            <ChatroomsHome user={user} userChatrooms={userChatrooms} />
+            <ChatroomsHome
+              user={user}
+              userChatrooms={userChatrooms}
+              searchChatrooms={searchChatrooms}
+              setActiveChatroom={setActiveChatroom}
+            />
           ) : (
-            <ChatroomsSettings userChatrooms={userChatrooms} />
+            <ChatroomsSettings
+              userChatrooms={userChatrooms}
+              searchChatrooms={searchChatrooms}
+            />
           )}
         </Col>
         {W > breakpoints.medium ? (

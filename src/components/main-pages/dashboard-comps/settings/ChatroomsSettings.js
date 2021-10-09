@@ -1,8 +1,10 @@
-export const ChatroomsSettings = ({ userChatrooms }) => {
+export const ChatroomsSettings = ({ userChatrooms, searchChatrooms }) => {
   return (
     <section className="flex dash-settings-chatrooms">
       {userChatrooms.map((room) => {
-        return <Chatroom room={room} />;
+        return room.name.includes(searchChatrooms) ? (
+          <Chatroom room={room} />
+        ) : null;
       })}
     </section>
   );

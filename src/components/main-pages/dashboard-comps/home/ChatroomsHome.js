@@ -1,10 +1,17 @@
 import { api_address } from "../../../../utils/http";
 
-export const ChatroomsHome = ({ user, userChatrooms }) => {
+export const ChatroomsHome = ({
+  user,
+  userChatrooms,
+  searchChatrooms,
+  setActiveChatroom,
+}) => {
   return (
     <section className="flex dash-home-chatrooms">
       {userChatrooms.map((room) => {
-        return <Chatroom room={room} />;
+        return room.name.includes(searchChatrooms) ? (
+          <Chatroom setActiveChatroom={setActiveChatroom} room={room} />
+        ) : null;
       })}
 
       <form action={api_address + "/create-chatroom"} method="post">
@@ -17,9 +24,14 @@ export const ChatroomsHome = ({ user, userChatrooms }) => {
   );
 };
 
-const Chatroom = ({ room }) => {
+const Chatroom = ({ room, setActiveChatroom }) => {
   return (
-    <section className="col2-chatroom-con">
+    <section
+      className="col2-chatroom-con"
+      onClick={() => {
+        setActiveChatroom(room);
+      }}
+    >
       <div className="flex chatroom-con-title-fav-con">
         <h5>{room.name}</h5>
         <div className="title-fav-con-fav">O</div>

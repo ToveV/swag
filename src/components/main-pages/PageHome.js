@@ -14,6 +14,9 @@ export const PageHome = () => {
   //   const [avatarChange, setAvatarChange] = useState(0);
   const [theme, setTheme] = useState([0, 0]);
 
+  const [usernameInput, setUsernameInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
+
   useEffect(() => {
     let changeW = window.addEventListener("resize", () =>
       setW(window.innerWidth)
@@ -54,6 +57,8 @@ export const PageHome = () => {
                     name="name"
                     id="name"
                     placeholder="haakon1337"
+                    // onChange={(e) => setUsernameInput(e.target.value)}
+                    // onChange={(e) => console.log(e.target.value)}
                   />
                   <label htmlFor="password">password:</label>
                   <input
@@ -61,6 +66,7 @@ export const PageHome = () => {
                     name="password"
                     id="password"
                     placeholder="pAssword123!"
+                    // onChange={(e) => setPasswordInput(e.target.value)}
                   />
                   <input type="number" name="theme" value={theme[0]} hidden />
                   <input type="number" name="avatar" value={avatar[0]} hidden />
@@ -82,6 +88,10 @@ export const PageHome = () => {
                   <LoginSignup
                     loginSignup={loginSignup}
                     setLoginSignup={setLoginSignup}
+                    username={usernameInput}
+                    password={passwordInput}
+                    theme={theme}
+                    avatar={avatar}
                   />
                 ) : null}
               </section>
